@@ -47,6 +47,11 @@ class ArticlesTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
+
+        $this->hasMany('Likes', [
+            'foreignKey' => 'article_id',
+            'dependent' => true,
+        ]);
     }
 
     /**

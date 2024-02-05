@@ -46,6 +46,11 @@ class UsersTable extends Table
         $this->hasMany('Articles', [
             'foreignKey' => 'user_id',
         ]);
+
+        $this->hasMany('Likes', [
+            'foreignKey' => 'user_id',
+            'dependent' => true,
+        ]);
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\ORM\TableRegistry;
 use Cake\View\JsonView;
 
 /**
@@ -25,6 +26,7 @@ class ArticlesController extends AppController
         $this->Authentication->allowUnauthenticated(['index', 'view']);
 
     }
+
     /**
      * Index method
      *
@@ -35,7 +37,13 @@ class ArticlesController extends AppController
         $this->paginate = [
             'contain' => ['Users'],
         ];
-        $articles = $this->paginate($this->Articles);
+        $articles = $this->paginate($this->Articles)->toArray();
+        foreach ($articles as $article) {
+            $likeCount = $this->Articles->Likes->find()
+                ->where(['article_id' => $article->id])
+                ->count();
+            $article->like_count = $likeCount;
+        }
 
         $this->set(compact('articles'));
         $this->viewBuilder()->setOption('serialize', ['articles']);
@@ -53,7 +61,10 @@ class ArticlesController extends AppController
         $article = $this->Articles->get($id, [
             'contain' => ['Users'],
         ]);
-
+        $likeCount = $this->Articles->Likes->find()
+            ->where(['article_id' => $article->id])
+            ->count();
+        $article->like_count = $likeCount;
         $this->set(compact('article'));
         $this->viewBuilder()->setOption('serialize', ['article']);
     }
@@ -119,6 +130,41 @@ class ArticlesController extends AppController
             $message = 'Error';
         }
         $this->set('message', $message);
+        $this->viewBuilder()->setOption('serialize', ['message']);
+    }
+
+    public function like($id = null)
+    {
+        $this->request->allowMethod('post');
+        $userId = $this->Authentication->getIdentity()->id;
+        // Validate
+        $likeTable = TableRegistry::getTableLocator()->get('Likes');
+        $existingLike = $likeTable->find()
+            ->where([
+                'user_id' => $userId,
+                'article_id' => $id
+            ])
+            ->first();
+
+        if ($existingLike) {
+            $message = 'Like already exists in the database.';
+        } else {
+            $like = $likeTable->newEntity([
+                'user_id' => $userId,
+                'article_id' => $id,
+            ]);
+            if ($likeTable->save($like)) {
+                $message = 'Liked';
+            } else {
+                $message = 'Error';
+            }
+        }
+
+        $this->set([
+            'message' => $message,
+            '_serialize' => 'message',
+        ]);
+
         $this->viewBuilder()->setOption('serialize', ['message']);
     }
 }
