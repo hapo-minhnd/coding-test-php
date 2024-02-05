@@ -106,13 +106,6 @@ curl --location --request PUT 'http://localhost:34251/articles/2.json' \
 curl --location --request DELETE 'http://localhost:34251/articles/1.json' \
 --header 'Authorization: xxx' \
 --header 'Content-Type: application/json' \
---data-raw '{
-    "user_id": 1,
-    "title": "test 2",
-    "body": "today, I'\''m working in haposoft.",
-    "created_at": "2024-02-03T00:00:00",
-    "updated_at": "2024-02-26T00:00:00"
-}'
 ```
 
 TODO: pls summarize how to check "Article Management" bahavior
