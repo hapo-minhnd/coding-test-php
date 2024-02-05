@@ -97,4 +97,19 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
+//    $routes->scope('/api', function (RouteBuilder $routes) {
+//
+//        $routes->setExtensions(['json']);
+//
+//        $routes->post(
+//            '/user/create',
+//            ['controller' => 'Users', 'action' => 'add', 'prefix' => 'Api']
+//        );
+//
+//        $routes->post(
+//            '/user/login',
+//            ['controller' => 'Users', 'action' => 'login', 'prefix' => 'Api']
+//        );
+//    });
+
 };
